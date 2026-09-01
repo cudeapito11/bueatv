@@ -263,6 +263,42 @@ src="https://www.facebook.com/tr?id=27961775023521966&ev=PageView&noscript=1"
   const stars = document.querySelectorAll('#stars .star');
   const ratingStage = document.getElementById('ratingStage');
   const resultStage = document.getElementById('resultStage');
+  const subText = document.querySelector('#ratingStage .sub');
+  const starsWrap = document.getElementById('stars');
+
+  const PIXEL_ID = '27961775023521966';
+  const VALOR = 19.90;
+  const MOEDA = 'BRL';
+
+  function getQueryParam(name){
+    return new URLSearchParams(window.location.search).get(name);
+  }
+
+  // O telefone vem colado na URL por você, na hora de mandar o link
+  // pro cliente depois do comprovante: .../confirmado/?tel=5577999999999
+  let telefone = getQueryParam('tel');
+  if (telefone) {
+    telefone = telefone.replace(/\D/g, '');
+    if (!telefone.startsWith('55')) telefone = '55' + telefone;
+  }
+
+  // Sem telefone na URL, a página não deixa avaliar/disparar nada —
+  // isso fecha a brecha de link genérico reutilizável por qualquer pessoa.
+  if (!telefone) {
+    subText.textContent = 'Link inválido ou incompleto. Fale com o suporte da BuéTV.';
+    starsWrap.style.display = 'none';
+  }
+
+  // Trava contra reenvio: se esse telefone já disparou Purchase neste
+  // navegador (ex: cliente atualizou a página e clicou de novo), não deixa
+  // disparar segunda vez.
+  const dedupeKey = telefone ? ('buetv_purchase_' + telefone) : null;
+  const jaConfirmado = !!(dedupeKey && localStorage.getItem(dedupeKey));
+
+  if (jaConfirmado) {
+    ratingStage.classList.add('hide');
+    resultStage.classList.add('show');
+  }
 
   function paintStars(value){
     stars.forEach(s => {
@@ -275,6 +311,8 @@ src="https://www.facebook.com/tr?id=27961775023521966&ev=PageView&noscript=1"
     star.addEventListener('mouseleave', () => paintStars(0));
 
     star.addEventListener('click', () => {
+      if (!telefone || jaConfirmado) return;
+
       const value = Number(star.dataset.value);
       paintStars(value);
 
@@ -282,18 +320,22 @@ src="https://www.facebook.com/tr?id=27961775023521966&ev=PageView&noscript=1"
         ratingStage.classList.add('hide');
         resultStage.classList.add('show');
 
-        /* Evento de conversão (Purchase) disparado na confirmação do acesso */
         if (typeof fbq === 'function') {
+          // Reinicializa o Pixel com o telefone pra essa venda casar com o
+          // mesmo cliente que virou lead lá na página 1 (Advanced Matching).
+          fbq('init', PIXEL_ID, { ph: telefone });
           fbq('track', 'Purchase', {
-            value: 0.00,
-            currency: 'BRL',
+            value: VALOR,
+            currency: MOEDA,
             content_name: 'BueTV Plano Pro - 1 mes'
           });
         }
+
+        if (dedupeKey) localStorage.setItem(dedupeKey, '1');
       }, 350);
     });
   });
 </script>
-
+  
 </body>
 </html>
