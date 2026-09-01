@@ -1,79 +1,299 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BuéTV - Sua experiência de streaming ainda melhor</title>
-  <meta name="description" content="BuéTV é a solução definitiva para quem ama filmes, séries, novelas, animes, futebol, doramas e muito mais." />
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍿</text></svg>" />
-  <link rel="stylesheet" href="assets/style.css" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BuéTV — Avalie sua experiência</title>
 
-  <!-- Meta Pixel Code -->
-  <script>
-  !function(f,b,e,v,n,t,s)
-  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-  n.queue=[];t=b.createElement(e);t.async=!0;
-  t.src=v;s=b.getElementsByTagName(e)[0];
-  s.parentNode.insertBefore(t,s)}(window, document,'script',
-  'https://connect.facebook.net/en_US/fbevents.js');
-  fbq('init', '27961775023521966');
-  fbq('track', 'PageView');
-  </script>
-  <noscript><img height="1" width="1" style="display:none"
-  src="https://www.facebook.com/tr?id=27961775023521966&ev=PageView&noscript=1"
-  /></noscript>
-  <!-- End Meta Pixel Code -->
+<!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '27961775023521966');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=27961775023521966&ev=PageView&noscript=1"
+/></noscript>
+<!-- End Meta Pixel Code -->
+
+<style>
+  :root{
+    --bg-0:#05080b;
+    --bg-1:#0b1118;
+    --teal:#22e0d4;
+    --teal-soft:#1ec9c0;
+    --gold:#ffc94d;
+    --text-muted:#a9b4bd;
+  }
+
+  *{box-sizing:border-box;}
+
+  html,body{
+    margin:0;
+    padding:0;
+    height:100%;
+    background:var(--bg-0);
+    font-family:'Segoe UI', Roboto, Arial, sans-serif;
+  }
+
+  body{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+    background:
+      radial-gradient(circle at 50% 0%, rgba(34,224,212,0.12), transparent 60%),
+      linear-gradient(180deg, var(--bg-1) 0%, var(--bg-0) 100%);
+    overflow:hidden;
+  }
+
+  .card{
+    width:100%;
+    max-width:420px;
+    text-align:center;
+    padding:40px 28px 48px;
+    position:relative;
+  }
+
+  .logo{
+    font-size:28px;
+    font-weight:800;
+    letter-spacing:1px;
+    color:#fff;
+    margin-bottom:6px;
+  }
+  .logo span{
+    display:block;
+    color:var(--teal);
+    font-size:16px;
+    letter-spacing:4px;
+    text-decoration:underline;
+    text-underline-offset:4px;
+    margin-top:-4px;
+  }
+
+  .stage{
+    margin-top:48px;
+  }
+
+  h1{
+    color:#fff;
+    font-size:22px;
+    font-weight:800;
+    line-height:1.35;
+    margin:0 0 10px;
+  }
+  h1 .hl{ color:var(--teal); }
+
+  .sub{
+    color:var(--text-muted);
+    font-size:14.5px;
+    line-height:1.5;
+    margin:0 0 34px;
+  }
+
+  .stars{
+    display:flex;
+    justify-content:center;
+    gap:10px;
+  }
+
+  #ratingStage{
+    transition:opacity .35s ease, transform .35s ease;
+  }
+  #ratingStage.hide{
+    opacity:0;
+    transform:translateY(-8px) scale(.96);
+    pointer-events:none;
+    position:absolute;
+    inset:0;
+  }
+
+  .star{
+    width:44px;
+    height:44px;
+    cursor:pointer;
+    fill:none;
+    stroke:#3a4550;
+    stroke-width:1.6;
+    transition:transform .15s ease, fill .2s ease, stroke .2s ease;
+  }
+  .star:hover{ transform:scale(1.12); }
+  .star.filled{
+    fill:var(--gold);
+    stroke:var(--gold);
+  }
+
+  .result{
+    display:none;
+    flex-direction:column;
+    align-items:center;
+    gap:18px;
+    animation:fadeUp .5s ease forwards;
+  }
+  .result.show{ display:flex; }
+
+  @keyframes fadeUp{
+    from{ opacity:0; transform:translateY(14px); }
+    to{ opacity:1; transform:translateY(0); }
+  }
+
+  .check-circle{
+    width:76px;
+    height:76px;
+    border-radius:50%;
+    background:radial-gradient(circle at 30% 30%, rgba(34,224,212,0.25), rgba(34,224,212,0.05));
+    border:2px solid var(--teal);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow:0 0 30px rgba(34,224,212,0.35);
+  }
+  .check-circle svg{
+    width:36px;
+    height:36px;
+    stroke:var(--teal);
+    fill:none;
+    stroke-width:3;
+    stroke-linecap:round;
+    stroke-linejoin:round;
+  }
+
+  .status-tag{
+    color:var(--teal);
+    font-weight:700;
+    font-size:13px;
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+  }
+
+  .result h2{
+    color:#fff;
+    font-size:21px;
+    font-weight:800;
+    margin:0;
+    line-height:1.35;
+  }
+  .result h2 span{ color:var(--teal); }
+
+  .plan-box{
+    width:100%;
+    border:1px solid rgba(34,224,212,0.35);
+    background:rgba(34,224,212,0.06);
+    border-radius:14px;
+    padding:16px 18px;
+    margin-top:4px;
+  }
+  .plan-box .label{
+    color:var(--text-muted);
+    font-size:12px;
+    text-transform:uppercase;
+    letter-spacing:1px;
+    margin-bottom:4px;
+  }
+  .plan-box .value{
+    color:#fff;
+    font-size:18px;
+    font-weight:800;
+  }
+  .plan-box .value span{ color:var(--teal); }
+
+  .thanks{
+    color:var(--text-muted);
+    font-size:13.5px;
+    margin-top:6px;
+    line-height:1.5;
+  }
+
+  footer{
+    margin-top:40px;
+    color:#5b6670;
+    font-size:11.5px;
+  }
+</style>
 </head>
 <body>
 
-  <section class="hero">
-    <div class="hero-bg" aria-hidden="true"></div>
-    <div class="hero-tint" aria-hidden="true"></div>
+  <div class="card">
+    <div class="stage">
+      <!-- Etapa 1: pedido de avaliação -->
+      <div id="ratingStage">
+        <div class="logo">BUÉ<span>TV</span></div>
+        <h1>Antes de liberar seu acesso, <span class="hl">avalie sua experiência</span></h1>
+        <p class="sub">Sua opinião é muito importante para continuarmos melhorando a BuéTV.</p>
 
-    <div class="floating-icons" aria-hidden="true">
-      <span style="top:10%; left:15%;">🎬</span>
-      <span style="top:70%; left:8%;">📺</span>
-      <span style="top:20%; left:80%;">🎥</span>
-      <span style="top:80%; left:70%;">🍿</span>
-    </div>
+        <div class="stars" id="stars">
+          <svg class="star" data-value="1" viewBox="0 0 24 24"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7-6.2-3.7-6.2 3.7 1.6-7L2 9.2l7.1-.6z"/></svg>
+          <svg class="star" data-value="2" viewBox="0 0 24 24"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7-6.2-3.7-6.2 3.7 1.6-7L2 9.2l7.1-.6z"/></svg>
+          <svg class="star" data-value="3" viewBox="0 0 24 24"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7-6.2-3.7-6.2 3.7 1.6-7L2 9.2l7.1-.6z"/></svg>
+          <svg class="star" data-value="4" viewBox="0 0 24 24"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7-6.2-3.7-6.2 3.7 1.6-7L2 9.2l7.1-.6z"/></svg>
+          <svg class="star" data-value="5" viewBox="0 0 24 24"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7-6.2-3.7-6.2 3.7 1.6-7L2 9.2l7.1-.6z"/></svg>
+        </div>
+      </div>
 
-    <div class="logo" aria-hidden="true">
-      <span class="line1">BUÉ</span>
-      <span class="line2">TV</span>
-    </div>
+      <!-- Etapa 2: confirmação -->
+      <div class="result" id="resultStage">
+        <div class="check-circle">
+          <svg viewBox="0 0 24 24"><polyline points="4 12 9 18 20 6"/></svg>
+        </div>
+        <div class="status-tag">Pagamento aprovado</div>
+        <h2>Obrigado pela sua avaliação!<br>Seu acesso foi <span>liberado</span>.</h2>
 
-    <div class="hero-content">
-      <div class="text-block">
-        <h1 class="headline">
-          Sua experiência de streaming ainda melhor com
-          <span class="highlight">BUÉ TV</span>
-        </h1>
+        <div class="plan-box">
+          <div class="label">Plano ativado</div>
+          <div class="value">1 mês — <span>Plano Pro</span></div>
+        </div>
 
-        <p class="subtext">
-          BuéTV é <strong>a solução definitiva</strong> para quem ama filmes, séries, novelas, animes, futebol, doramas e muito mais.
-        </p>
-
-        <p class="subtext">
-          Desenvolvido por uma equipe apaixonada por tecnologia e entretenimento, o BuéTV chegou para revolucionar
-          a maneira como você assiste ao seu conteúdo favorito — <strong>tudo em um só lugar</strong>.
-        </p>
-
-        <a href="redirecionando.html" class="cta-btn">
-          <img src="assets/img/whatsapp-logo.png" alt="" class="cta-btn-icon" />
-          Chamar no WhatsApp
-        </a>
+        <p class="thanks">Aproveite todo o catálogo Bué TV com acesso completo ao Plano Pro por 1 mês.</p>
       </div>
     </div>
 
-    <div class="visual" aria-hidden="true">
-      <div class="popcorn-glow"></div>
-      <img class="popcorn-img" src="assets/img/popcorn.png" alt="" />
-    </div>
+    <footer>BuéTV © 2026 — Todos os direitos reservados</footer>
+  </div>
 
-    <div class="footer-note">BuéTV &copy; 2026 — Todos os direitos reservados.</div>
-  </section>
+<script>
+  const stars = document.querySelectorAll('#stars .star');
+  const ratingStage = document.getElementById('ratingStage');
+  const resultStage = document.getElementById('resultStage');
+
+  function paintStars(value){
+    stars.forEach(s => {
+      s.classList.toggle('filled', Number(s.dataset.value) <= value);
+    });
+  }
+
+  stars.forEach(star => {
+    star.addEventListener('mouseenter', () => paintStars(Number(star.dataset.value)));
+    star.addEventListener('mouseleave', () => paintStars(0));
+
+    star.addEventListener('click', () => {
+      const value = Number(star.dataset.value);
+      paintStars(value);
+
+      setTimeout(() => {
+        ratingStage.classList.add('hide');
+        resultStage.classList.add('show');
+
+        /* Evento de conversão (Purchase) disparado na confirmação do acesso */
+        if (typeof fbq === 'function') {
+          fbq('track', 'Purchase', {
+            value: 0.00,
+            currency: 'BRL',
+            content_name: 'BueTV Plano Pro - 1 mes'
+          });
+        }
+      }, 350);
+    });
+  });
+</script>
 
 </body>
 </html>
